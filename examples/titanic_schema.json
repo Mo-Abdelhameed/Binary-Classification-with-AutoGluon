@@ -1,0 +1,81 @@
+{
+  "title": "Titanic Passenger Survival dataset",
+  "summary": "The well-known Titanic dataset used to develop models to predict if a passenger survived the shipwreck. ",
+  "modelCategory": "binary_classification",
+  "schemaVersion": 1.0,
+  "inputDataFormat": "CSV",
+  "id": {
+    "name": "PassengerId",
+    "description": "A unique identifier for each passenger in the dataset."
+  },
+  "target": {
+    "name": "Survived",
+    "description": "A binary variable indicating whether or not the passenger survived (0 = No, 1 = Yes).",
+    "classes": [
+      "0",
+      "1"
+    ]
+  },
+  "features": [
+    {
+      "name": "Pclass",
+      "description": "Ticket class",
+      "dataType": "CATEGORICAL",
+      "categories": [
+        1,
+        2,
+        3
+      ],
+      "nullable": false
+    },
+    {
+      "name": "Sex",
+      "description": "gender",
+      "dataType": "CATEGORICAL",
+      "categories": [
+        "female",
+        "male"
+      ],
+      "nullable": false
+    },
+    {
+      "name": "Age",
+      "description": "Age in years",
+      "dataType": "NUMERIC",
+      "example": 22.0,
+      "nullable": true
+    },
+    {
+      "name": "SibSp",
+      "description": "# of siblings / spouses aboard the Titanic",
+      "dataType": "NUMERIC",
+      "example": 1,
+      "nullable": false
+    },
+    {
+      "name": "Parch",
+      "description": "# of parents / children aboard the Titanic",
+      "dataType": "NUMERIC",
+      "example": 0,
+      "nullable": false
+    },
+    {
+      "name": "Fare",
+      "description": "Passenger fare",
+      "dataType": "NUMERIC",
+      "example": 7.25,
+      "nullable": false
+    },
+    {
+      "name": "Embarked",
+      "description": "Port of embarkation",
+      "dataType": "CATEGORICAL",
+      "categories": [
+        "C",
+        "Q",
+        "S"
+      ],
+      "nullable": true
+    }
+  ]
+}

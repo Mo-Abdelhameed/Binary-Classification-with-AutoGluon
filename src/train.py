@@ -7,7 +7,6 @@ from logger import get_logger, log_error
 from schema.data_schema import load_json_data_schema, save_schema
 from utils import set_seeds
 
-
 logger = get_logger(task_name="train")
 
 

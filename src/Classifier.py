@@ -23,15 +23,18 @@ class Classifier:
     def __init__(self, train_input: TabularDataset, schema: BinaryClassificationSchema):
         """Construct a new Binary Classifier."""
         self._is_trained: bool = False
-        self.predictor: TabularPredictor = None
+        self.predictor: TabularPredictor = TabularPredictor(
+            label=schema.target, eval_metric='f1', path=paths.PREDICTOR_DIR_PATH
+        )
         self.train_input = train_input
         self.schema = schema
 
+    def __str__(self):
+        return f"Model name: {self.model_name}"
+
     def train(self) -> None:
         """Train the model on the provided data"""
-        predictor = TabularPredictor(label=self.schema.target, eval_metric='f1', path=paths.PREDICTOR_DIR_PATH)
-        predictor.fit(train_data=self.train_input)
-        self.predictor = predictor
+        self.predictor.fit(train_data=self.train_input)
         self._is_trained = True
 
     def predict(self, inputs: pd.DataFrame, return_proba: bool = False) -> Union[pd.DataFrame, pd.Series]:
@@ -120,3 +123,4 @@ class Classifier:
             Classifier: A new instance of the loaded classifier model.
         """
         return Classifier.load(predictor_dir_path)
+

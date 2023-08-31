@@ -1,8 +1,16 @@
 .DS_Store
-__pycache__
 .idea/
 src/test.py
 model_inputs_outputs/model/
 logs.log
 configs
 AutogluonModels/
+__pycache__/
+*.py[cod]
+*$py.class
+.tox/
+.coverage
+.cache
+.pytest_cache/
+coverage.xml
+*.cover

@@ -78,6 +78,16 @@ class BinaryClassificationSchema:
         return self.schema["schemaVersion"]
 
     @property
+    def description(self) -> str:
+        """
+        Gets the description of the schema.
+
+        Returns:
+             str: The description of the schema.
+        """
+        return self.schema["description"]
+
+    @property
     def input_data_format(self) -> str:
         """
         Gets the format of the input data.

@@ -1,6 +1,7 @@
 from config import paths
 from logger import get_logger
 from Classifier import Classifier
+from schema.data_schema import load_json_data_schema
 from utils import read_csv_in_directory, save_dataframe_as_csv
 
 logger = get_logger(task_name="predict")
@@ -19,10 +20,11 @@ def run_batch_predictions() -> None:
         """
     x_test = read_csv_in_directory(paths.TEST_DIR)
     model = Classifier.load(paths.PREDICTOR_DIR_PATH)
-
+    data_schema = load_json_data_schema(paths.INPUT_SCHEMA_DIR)
+    ids = x_test[data_schema.id]
     logger.info("Making predictions...")
     predictions_df = Classifier.predict_with_model(model, x_test, return_proba=True)
-
+    predictions_df.insert(0, data_schema.id, ids)
     logger.info("Saving predictions...")
     save_dataframe_as_csv(
         dataframe=predictions_df, file_path=paths.PREDICTIONS_FILE_PATH

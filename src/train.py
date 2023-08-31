@@ -44,8 +44,6 @@ def run_training(
         if not os.path.exists(predictor_dir_path):
             os.makedirs(predictor_dir_path)
         classifier.save(predictor_dir_path)
-        logger.info(f'The best model is: {type(classifier.predictor.get_model_best()).__name__}')
-        logger.info('Model saved!')
 
     except Exception as exc:
         err_msg = "Error occurred during training."

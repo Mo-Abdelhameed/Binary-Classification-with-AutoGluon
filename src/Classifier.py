@@ -1,11 +1,13 @@
 import os
 import pandas as pd
 import joblib
+from config import paths
 from typing import Union
 from sklearn.exceptions import NotFittedError
 from schema.data_schema import BinaryClassificationSchema
 from autogluon.tabular import TabularDataset, TabularPredictor
 
+os.environ['MPLCONFIGDIR'] = os.getcwd() + "/configs/"
 PREDICTOR_FILE_NAME = 'predictor.joblib'
 
 
@@ -27,7 +29,7 @@ class Classifier:
 
     def train(self) -> None:
         """Train the model on the provided data"""
-        predictor = TabularPredictor(label=self.schema.target, eval_metric='f1')
+        predictor = TabularPredictor(label=self.schema.target, eval_metric='f1', path=paths.PREDICTOR_DIR_PATH)
         predictor.fit(train_data=self.train_input)
         self.predictor = predictor
         self._is_trained = True
@@ -63,7 +65,7 @@ class Classifier:
 
         if not self._is_trained:
             raise NotFittedError("Model is not fitted yet.")
-        joblib.dump(self.predictor, os.path.join(model_dir_path, PREDICTOR_FILE_NAME))
+        joblib.dump(self, os.path.join(model_dir_path, PREDICTOR_FILE_NAME))
 
     @classmethod
     def load(cls, model_dir_path: str) -> "Classifier":

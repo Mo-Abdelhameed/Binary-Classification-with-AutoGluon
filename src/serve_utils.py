@@ -7,7 +7,6 @@ from typing import Any, Dict, Tuple
 from config import paths
 from data_models.data_validator import validate_data
 from logger import get_logger, log_error
-from predict import create_predictions_dataframe
 from Classifier import Classifier
 from schema.data_schema import load_saved_schema
 from utils import read_json_as_dict
@@ -86,6 +85,8 @@ def transform_req_data_and_make_predictions(
     """
     logger.info(f"Predictions requested for {len(data)} samples...")
 
+    ids = data[model_resources.data_schema.id]
+
     # validate the data
     logger.info("Validating data...")
     validate_data(data=data, data_schema=model_resources.data_schema, is_train=False)
@@ -93,15 +94,9 @@ def transform_req_data_and_make_predictions(
     logger.info("Transforming data sample(s)...")
 
     logger.info("Making predictions...")
-    predictions_arr = Classifier.predict_with_model(
-        model_resources.predictor_model, data, raw_score=True
-    )
+    predictions_df = Classifier.predict_with_model(model_resources.predictor_model, data, return_proba=True)
     logger.info("Converting predictions array into dataframe...")
-    predictions_df = create_predictions_dataframe(
-        predictions_arr,
-        model_resources.data_schema,
-        return_probs=True,
-    )
+    predictions_df.insert(0, model_resources.data_schema.id, ids)
 
     logger.info("Converting predictions dataframe into response dictionary...")
     predictions_response = create_predictions_response(
@@ -125,6 +120,7 @@ def create_predictions_response(
         dict: The response data in a dictionary.
     """
     class_names = data_schema.target_classes
+    predictions_df.columns = map(str, predictions_df.columns)
     # find predicted class which has the highest probability
     predictions_df["__predicted_class"] = predictions_df[class_names].idxmax(axis=1)
     sample_predictions = []

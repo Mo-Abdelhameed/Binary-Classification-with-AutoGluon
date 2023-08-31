@@ -65,6 +65,7 @@ The following is the directory structure of the project:
 - **`entry_point.sh`**: This file is used as the entry point for the Docker container. It is used to run the application. When the container is run using one of the commands `train`, `predict` or `serve`, this script runs the corresponding script in the `src` folder to execute the task.
 - **`LICENSE`**: This file contains the license for the project.
 - **`README.md`**: This file (this particular document) contains the documentation for the project, explaining how to set it up and use it.
+- **`pytest.ini`**: This is the configuration file for pytest, the testing framework used in this project.
 - **`tox.ini`**: This is the configuration file for tox, the primary test runner used in this project.
 ## Usage
 

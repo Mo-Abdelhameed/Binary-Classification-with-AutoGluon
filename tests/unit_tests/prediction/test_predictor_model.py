@@ -132,7 +132,7 @@ def test_save_load_model(tmpdir, classifier, xor_data):
     """
     # Specify the file path
     model_dir_path = tmpdir.mkdir("model")
-
+    classifier.train()
     # Save the model
     classifier.save(model_dir_path)
 

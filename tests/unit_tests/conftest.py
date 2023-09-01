@@ -335,7 +335,7 @@ def sample_response_data(schema_dict):
 
 
 @pytest.fixture
-def app(
+def appp(
     input_schema_dir,
     train_dir,
     resources_paths_dict: dict,

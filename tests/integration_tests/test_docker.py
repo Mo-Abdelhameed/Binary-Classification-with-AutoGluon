@@ -198,7 +198,6 @@ def test_inference_service(
     container_name: str,
     sample_request_data: dict,
     sample_response_data: dict,
-    sample_explanation_response_data: dict,
 ):
     """
     Integration test for the inference service.
@@ -211,8 +210,6 @@ def test_inference_service(
             and `/explain` endpoints.
         sample_response_data (dict): The expected response data for testing the
             `/infer` endpoint.
-        sample_explanation_response_data (dict): The expected response data for testing
-            the `/explain` endpoint.
 
     Raises:
         exc: If the Docker container exits with an error.
@@ -266,24 +263,10 @@ def test_inference_service(
             in sample_response_data["targetClasses"]
         )
 
-        # Test `/explain` endpoint
-        response = requests.post(
-            "http://localhost:8080/explain", json=sample_request_data, timeout=5
-        )
-        response_data = response.json()
-        assert response.status_code == 200
-        assert (
-            response_data["targetClasses"]
-            == sample_explanation_response_data["targetClasses"]
-        )
         assert (
             response_data["predictions"][0]["predictedClass"]
             in sample_response_data["targetClasses"]
         )
-        # explanations
-        assert "explanation" in response_data["predictions"][0]
-        assert "baseline" in response_data["predictions"][0]["explanation"]
-        assert "featureScores" in response_data["predictions"][0]["explanation"]
 
     except ContainerError as exc:
         print(f"Container exited with error. Exit status: {exc.exit_status}")

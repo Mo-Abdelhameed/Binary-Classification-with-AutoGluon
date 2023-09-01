@@ -2,6 +2,7 @@ import json
 from unittest.mock import patch
 
 import pandas as pd
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
@@ -13,13 +14,66 @@ from src.utils import read_json_as_dict
 
 
 @pytest.fixture
-def input_schema_dir():
-    return paths.INPUT_SCHEMA_DIR
+def train_dir(sample_train_data, tmpdir, train_data_file_name):
+    """Fixture to create and save a sample DataFrame for testing"""
+    train_data_dir = tmpdir.mkdir("train")
+    train_data_file_path = train_data_dir.join(train_data_file_name)
+    sample_train_data.to_csv(train_data_file_path, index=False)
+    return str(train_data_dir)
 
 
 @pytest.fixture
-def train_dir():
-    return paths.TRAIN_DIR
+def sample_data():
+    """Fixture to create a larger sample DataFrame for testing"""
+    np.random.seed(0)
+    N = 100
+    data = pd.DataFrame(
+        {
+            "id": range(1, N + 1),
+            "numeric_feature_1": np.random.randint(1, 100, size=N),
+            "numeric_feature_2": np.random.normal(0, 1, size=N),
+            "categorical_feature_1": np.random.choice(["A", "B", "C"], size=N),
+            "categorical_feature_2": np.random.choice(
+                ["P", "Q", "R", "S", "T"], size=N
+            ),
+            "target_field": np.random.choice(["A", "B"], size=N),
+        }
+    )
+    return data
+
+
+@pytest.fixture
+def sample_train_data(sample_data):
+    """Fixture to create a larger sample DataFrame for testing"""
+    N_train = int(len(sample_data) * 0.8)
+    return sample_data.head(N_train)
+
+
+@pytest.fixture
+def sample_test_data(sample_data):
+    """Fixture to create a larger sample DataFrame for testing"""
+    N_test = int(len(sample_data) * 0.2)
+    return sample_data.tail(N_test)
+
+
+@pytest.fixture
+def input_schema_file_name():
+    return "schema.json"
+
+
+@pytest.fixture
+def train_data_file_name():
+    return "train.csv"
+
+
+@pytest.fixture
+def input_schema_dir(schema_dict, tmpdir, input_schema_file_name):
+    """Fixture to create and save a sample schema for testing"""
+    schema_dir = tmpdir.mkdir("input_schema")
+    schema_file_path = schema_dir.join(input_schema_file_name)
+    with open(schema_file_path, "w") as file:
+        json.dump(schema_dict, file)
+    return str(schema_dir)
 
 
 @pytest.fixture
@@ -33,17 +87,18 @@ def saved_schema_dir():
 
 
 @pytest.fixture
-def predictor_dir():
-    return paths.PREDICTOR_DIR_PATH
+def predictor_dir(tmpdir):
+    return tmpdir.mkdir('predictor')
+
 
 
 @pytest.fixture
 def app(
-    input_schema_dir: str,
-    train_dir: str,
-    saved_schema_dir: str,
-    predictor_dir: str,
-    config_file_paths_dict: dict,
+        input_schema_dir: str,
+        train_dir: str,
+        saved_schema_dir: str,
+        predictor_dir: str,
+        config_file_paths_dict: dict,
 ):
     """
     Define a fixture for the test app.
@@ -102,7 +157,6 @@ def test_infer_endpoint(mock_transform_and_predict, app, sample_request_data):
         "status": "success",
         "predictions": [],
     }
-
     response = app.post("/infer", data=json.dumps(sample_request_data))
 
     print(response.json())
@@ -111,4 +165,3 @@ def test_infer_endpoint(mock_transform_and_predict, app, sample_request_data):
     # You can add more assertions to check if the function was called with the
     # correct arguments
     mock_transform_and_predict.assert_called()
-    

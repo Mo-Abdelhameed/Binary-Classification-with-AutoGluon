@@ -21,7 +21,7 @@ Here are the highlights of this implementation: <br/>
   - GBM
   - CatBoost
   - Xgboost
-  - FASTAI: See also the FastAI docs: https://docs.fast.ai/tabular.models.html
+  - FASTAI
   - Random Forest
   - Extra Trees
   - KNN

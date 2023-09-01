@@ -1,4 +1,4 @@
-# Binary-Classification-with-AutoGlueon
+# Binary-Classification-with-AutoGluon
 
 ## Project Description
 

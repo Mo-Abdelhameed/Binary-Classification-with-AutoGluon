@@ -2,7 +2,7 @@ from config import paths
 from logger import get_logger
 from Classifier import Classifier
 from schema.data_schema import load_json_data_schema
-from utils import read_csv_in_directory, save_dataframe_as_csv
+from utils import read_csv_in_directory, save_dataframe_as_csv, ResourceTracker
 
 logger = get_logger(task_name="predict")
 
@@ -29,12 +29,13 @@ def run_batch_predictions(
             predictions_file_path (str): Path in which to store the prediction file.
             return_proba (bool): If true, outputs the probabilities of the target classes.
         """
-    x_test = read_csv_in_directory(test_dir)
-    model = Classifier.load(predictor_dir)
-    data_schema = load_json_data_schema(paths.INPUT_SCHEMA_DIR)
-    ids = x_test[data_schema.id]
-    logger.info("Making predictions...")
-    predictions_df = Classifier.predict_with_model(model, x_test, return_proba=return_proba)
+    with ResourceTracker(logger, monitoring_interval=0.1):
+        x_test = read_csv_in_directory(test_dir)
+        model = Classifier.load(predictor_dir)
+        data_schema = load_json_data_schema(paths.INPUT_SCHEMA_DIR)
+        ids = x_test[data_schema.id]
+        logger.info("Making predictions...")
+        predictions_df = Classifier.predict_with_model(model, x_test, return_proba=return_proba)
     if return_proba:
         predictions_df.insert(0, data_schema.id, ids)
     else:
